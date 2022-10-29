@@ -4,9 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 @Slf4j
 public class MainTest
@@ -66,5 +69,37 @@ public class MainTest
                     }
                 };
         assertThat(free).isTrue();
+    }
+
+    @Test
+    void instanceof_pattern_matching()
+    {
+        Random r = new Random();
+        Object o = r.nextBoolean() ? r.nextLong() : r.nextBoolean();
+        if (o instanceof Long l && l % 2 == 0)
+        {
+            log.info("It is even number {}", l);
+        }
+    }
+
+    @Test
+    void text_blocks()
+    {
+        var text = """
+                one
+                two
+                three
+                """;
+        assertThat(text).isEqualTo("one\ntwo\nthree\n");
+    }
+
+    @Test
+    void optional_or_else_throw()
+    {
+        @SuppressWarnings("all")
+        var error = catchThrowable(() -> {
+            Optional.empty().orElseThrow(() -> new IllegalStateException("readable"));
+        });
+        assertThat(error).hasMessage("readable");
     }
 }
